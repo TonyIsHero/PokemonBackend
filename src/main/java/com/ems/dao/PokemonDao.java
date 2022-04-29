@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
+import com.ems.constants.DaoConstants;
 import com.ems.model.Pokemon;
 import com.ems.model.Users;
 
@@ -76,6 +77,7 @@ public class PokemonDao {
 		
 		List<Users> userList = new ArrayList<>();
 		String sql="select * from pokemon_db.poke_users";
+		//System.out.println(sql);
 		
 		return jdbctemplate.query(sql, new ResultSetExtractor<List<Users>>() {
 			
@@ -89,7 +91,7 @@ public class PokemonDao {
 					e.setPassword(rs.getString("password"));
 					e.setStatus(rs.getBoolean("status"));
 					e.setxP(rs.getInt("xP"));
-					e.setScore(rs.getInt("score"));
+					e.setScore(rs.getInt("Score"));
 					userList.add(e);
 					
 				}
@@ -97,10 +99,44 @@ public class PokemonDao {
 			}
 		});
 
-}
+	}
+	
+	/*
+	 * Fetching only Score and User Name from database.
+	 * For Leader Board
+	 */
+	
+	
+	/*
+	 * This method is not used, 
+	 * kept for reference -> Was used for Leader Board
+	 */
+	
+	public List<Users> getLeaderboard() {
+		
+		List<Users> leaderList = new ArrayList<>();
+		String sql="select * from pokemon_db.poke_users";
+		
+		return jdbctemplate.query(sql, new ResultSetExtractor<List<Users>>() {
+			
+			public List<Users> extractData(ResultSet rs)throws SQLException, DataAccessException{
 
+				while(rs.next()) {
+					
+					Users e=new Users();
+					e.setUsername(rs.getString("username"));
+					e.setScore(rs.getInt("score"));
+					leaderList.add(e);
+					
+				}
+				return leaderList;
+			}
+		});
+
+	}
+	
 	public void updateStatus(Users user) {
-		// TODO Auto-generated method stub
+
 		
 		String email="'"+user.getEmail()+"'";
 		String sql="update poke_users set status=true where email="+email;
@@ -115,4 +151,41 @@ public class PokemonDao {
 		
 		
 	}
+
+	public String updateStatusOFFLINE(String email) {
+		
+		String email_id="'"+email+"'";
+		String sql="update poke_users set status=false where email="+email_id;
+		
+		String flag=DaoConstants.STATUS_UPDATE_SUCCESS;
+		try
+		{
+			jdbctemplate.execute(sql);
+		}
+		catch(Exception e) {
+			flag=DaoConstants.UPDATE_FAILED;
+			System.out.println(e);
+		}
+		return flag;
+		
+	}
+
+	public String updateScore(String email, int score) {
+		
+		String email_id="'"+email+"'";
+		String sql="update poke_users set score="+score+" where email="+email_id;
+		String flag=DaoConstants.SCORE_UPDATE_SUCCESS;
+		try
+		{
+			jdbctemplate.execute(sql);
+		}
+		catch(Exception e) {
+			flag=DaoConstants.UPDATE_FAILED;
+			System.out.println(e);
+		}
+		
+		return flag;
+		
+	}
+	
 }

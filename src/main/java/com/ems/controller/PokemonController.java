@@ -46,18 +46,25 @@ public class PokemonController {
 		return pokeList;
 	}
 	
+	/*
+	 * Method to fetch user with the respective email id using 
+	 * email parameter
+	 */
 	
 	@RequestMapping(value=ControllerConstants.GET_USER_BY_EMAIL, method=RequestMethod.GET)
-	public Users getUserByEmail(@RequestParam("email") String email)
+	public Users getUserByEmail(@RequestParam(ControllerConstants.CONSTANT_EMAIL) String email)
 	{
 		if(email==null) {
-			throw new IllegalArgumentException("Cannot be null");
+			throw new IllegalArgumentException(ControllerConstants.CANNOT_BE_NULL);
 		}
 		
 		else
 			return service.getUserByEmail(email);
 	}
 	
+	/*
+	 * Returns all the users present is the database
+	 */
 	
 	@RequestMapping(value=ControllerConstants.GET_USER_VALUE, method = RequestMethod.GET)
 	public List<Users> getUserDetails() {
@@ -66,6 +73,19 @@ public class PokemonController {
 		
 		return userList;
 	}
+	
+	@RequestMapping(value=ControllerConstants.GET_LEADER_LIST, method=RequestMethod.GET)
+	public List<Users> getLeaderBoard(){
+		
+		List<Users> leaderList=service.getLeaderBoard();
+		return leaderList;
+	}
+	
+	/*
+	 * To check if the credentials entered by the user is correct or not
+	 * Credentials entered are:
+	 * Email ID and Password
+	 */
 	
 	@RequestMapping(value=ControllerConstants.POST_LOGIN_VALUE, method = RequestMethod.POST, 
 			consumes=MediaType.APPLICATION_JSON_VALUE)
@@ -76,13 +96,15 @@ public class PokemonController {
 		boolean check= service.checkUser(user);
 		
 		if(check)
-			return "Login Success";
+			return ControllerConstants.LOGIN_SUCCESS;
 		else
-			return "Login Failed";
+			return ControllerConstants.LOGIN_FAILED;
 		
 	}
 	/*
-	 * Method to insert username, password and email to database 
+	 * Method to create an Account in the database 
+	 * Parameters:
+	 * Email id, User name, Password
 	 */
 	
 	@RequestMapping(value=ControllerConstants.POST_INSERT_VALUE, method = RequestMethod.POST,
@@ -94,7 +116,7 @@ public class PokemonController {
 		boolean checkEmailPresent=false;
 		
 		/*
-		 * If user enters no value to username, password or email
+		 * If user enters no value to User name, password or email
 		 */
 		if(user.getUsername()==null||user.getPassword()==null||user.getEmail()==null)
 			
@@ -121,15 +143,31 @@ public class PokemonController {
 		}
 	}
 	
-	@RequestMapping(value="/updateStatusOnline", method=RequestMethod.POST,
+	/*
+	 * Method to update the status when the user logs out of the system
+	 * Parameter used is Email, column changed in database is "Status"
+	 */
+	
+	@RequestMapping(value=ControllerConstants.POST_UPDATE_STATUS, method=RequestMethod.POST,
 			consumes=MediaType.ALL_VALUE)
-	public String updateStatus(@RequestBody String status) {
+	public String updateStatusOFFLINE(@RequestParam (ControllerConstants.CONSTANT_EMAIL) String email) {
 		
-		if(status=="Login Success")
-		return service.updateStatus();
-		return status;
+		return service.updateStatusOFFLINE(email);
+
 		
 	}
-
 	
+	/*
+	 * Method to update score when the user updates the Team in front end
+	 * Parameters used are email (to fetch user), column updated is score.
+	 */
+	
+	@RequestMapping(value=ControllerConstants.POST_UPDATE_SCORE, method=RequestMethod.POST,
+			consumes=MediaType.ALL_VALUE)
+	public String updateScore(@RequestParam(ControllerConstants.CONSTANT_EMAIL)String email,@RequestParam(ControllerConstants.CONSTANT_SCORE) int score)
+	{
+		return service.updateScore(email,score);
+	}
+	
+
 }

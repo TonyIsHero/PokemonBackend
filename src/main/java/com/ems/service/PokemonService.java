@@ -2,11 +2,14 @@ package com.ems.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.util.PropertySource.Comparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import com.ems.constants.ServiceConstants;
 import com.ems.dao.PokemonDao;
 import com.ems.model.Pokemon;
 import com.ems.model.Users;
@@ -70,6 +73,7 @@ public class PokemonService {
 		/*
 		 * If element does not exist return false
 		 */
+		
 		catch(NoSuchElementException e) {
 			
 			flag=false;
@@ -110,11 +114,26 @@ public class PokemonService {
 		return flag;
 	}
 
-	public String updateStatus() {
-		// TODO Auto-generated method stub
-		return "Test";
+	/*
+	 * Calls the method in DAO, argument email is passed.
+	 */
+
+	public String updateStatusOFFLINE(String email) 
+	{
+		
+		return pokeDao.updateStatusOFFLINE(email);
 	}
 
+	public String updateScore(String email, int score)
+	{
+		return pokeDao.updateScore(email,score);
+	}
+	
+	/*
+	 *Method gets the List of Users from the Data Access Object.
+	 *Fetches the user details with respect to the Email passed.
+	 */
+	
 	public Users getUserByEmail(String email) {
 		
 		List<Users> userList=pokeDao.getUserDetails();
@@ -122,14 +141,36 @@ public class PokemonService {
 		
 		if(CollectionUtils.isEmpty(userList))
 		{
-			System.out.println("Data Not Found");
+			System.out.println(ServiceConstants.DATA_NOT_FOUND);
 		}
+		
+		/*
+		 * Gets the user with the email id that matches with the one passed.
+		 */
 		
 		return userList.stream()
 				.filter(user -> user.getEmail().equals(email))
 						.findAny().get();
 		
 	}
+	/*
+	 * Method gets the List of Users from the Data Access Object.
+	 * List of users is sorted in descending order with respect to the score.
+	 * Stored in sorted_leaders.
+	 */
+	
+	public List<Users> getLeaderBoard()
+	{
+		List<Users> leaders=pokeDao.getUserDetails();
+		
+		List<Users> sorted_leaders=leaders.stream().
+				sorted((o1,o2)->(int)(o2.getScore()-o1.getScore())).
+				collect(Collectors.toList());
+		
+		return sorted_leaders;
+	}
+
+
 
 	
 }

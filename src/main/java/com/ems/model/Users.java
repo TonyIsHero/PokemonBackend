@@ -1,5 +1,9 @@
 package com.ems.model;
 
+/*
+ * POJO to fetch Users Data from database
+ */
+
 public class Users {
 	
 	int xP,score;

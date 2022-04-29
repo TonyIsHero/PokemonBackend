@@ -15,4 +15,13 @@ public class ControllerConstants {
 	public static final String DATA_INSERTION_FAILURE="Invalid Credentials";
 	public static final String DATA_EMAIL_PRESENT="Email Already Exists";
 	public static final String GET_USER_BY_EMAIL="/getUserByEmail";
+	public static final String POST_UPDATE_STATUS="/updateStatus";
+	public static final String POST_UPDATE_SCORE="/updateScorebyEmail";
+	public static final String GET_LEADER_LIST="/getLeaderboard";
+	public static final String CONSTANT_EMAIL="email";
+	public static final String CONSTANT_SCORE="score";
+	public static final String CANNOT_BE_NULL="Cannot be Empty";
+	public static final String LOGIN_SUCCESS="Login Success";
+	public static final String LOGIN_FAILED="Login Failed";
+	
 }
